@@ -14,10 +14,12 @@ export const SOCKET_OUT_MESSAGE= 'socket_output_message';
  */
 export const NOTIFICATION_MESSAGE= 'notification';
 
+const urlPrefix = process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL : '';
+
 export const URLS = {
-  INIT_CHAT: '/api/initChat',
-  CONNECT_CHAT: '/api/connectChat',
-  CHAT_PARAMS: '/api/chatParams',
+  INIT_CHAT: `${urlPrefix}/api/initChat`,
+  CONNECT_CHAT: `${urlPrefix}/api/connectChat`,
+  CHAT_PARAMS: `${urlPrefix}/api/chatParams`,
 }
 
 export const CHAT_ID_HASH = 'chat_id';

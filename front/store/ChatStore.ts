@@ -1,26 +1,23 @@
 import { makeAutoObservable, observable, action } from 'mobx';
 
-import { StorredMessage, SocketMessage } from '@/front/types';
+import { StorredMessage, SocketMessage, AddMessageHandler } from '@/front/types';
 import { formatMessageForSocket, formatMessageForStorring,  } from '@/front/utils';
-import { SocketManager } from '@/front/socket/SocketManager';
 
 /**
  * Storring chat messages, add new one
  */
 export class ChatStore {
 
-  socketManager: SocketManager;
+  sendSocketMessage: AddMessageHandler;
   messages: StorredMessage[] = [];
 
-  constructor(socketManager: SocketManager) {
-    this.socketManager = socketManager;
+  constructor(sendSocketMessage: AddMessageHandler) {
+    this.sendSocketMessage = sendSocketMessage;
 
     makeAutoObservable(this, {
       messages: observable,
       sendMessage: action,
     });
-
-    this.socketManager.subscribeToMessages(this.addMessage);
   }
 
   /**
@@ -31,7 +28,7 @@ export class ChatStore {
     const storredMessage = formatMessageForStorring(socketMessage);
 
     this.messages.push(storredMessage);
-    this.socketManager.sendMessage(socketMessage);
+    this.sendSocketMessage(socketMessage);
   }
 
   /**

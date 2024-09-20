@@ -5,13 +5,13 @@ import { useContext, useRef } from 'react';
 import Button from '@/front/components/ui/button';
 import Input from '@/front/components/ui/input';
 import Card from '../ui/card';
-import { ChatStoreContext } from '@/front/store/ChatStoreContext';
+import { ChatContext } from '@/front/context/ChatContext';
  
 /**
  * Chat conent container, showed only when chat initialized
  */
 export const MessageInput = () => {
-  const { sendMessage } = useContext(ChatStoreContext);
+  const { sendMessage } = useContext(ChatContext);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = () => {

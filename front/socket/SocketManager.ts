@@ -21,14 +21,14 @@ export class SocketManager {
 
     this.socket.on('reconnect', () => {
     //  console.log('Reconnected with socket server');
-    });  
+    });
   }
 
   subscribeToMessages(addMessage: AddMessageHandler) {
     this.socket.on(SOCKET_OUT_MESSAGE, addMessage);
   }
 
-  sendMessage = (message: SocketMessage) => {
+  sendSocketMessage = (message: SocketMessage) => {
     this.socket.emit(SOCKET_IN_MESSAGE, message);
   }
 

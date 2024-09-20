@@ -2,13 +2,13 @@ import React, { useContext, useLayoutEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 
 import MessageBubble from '../ui/messageBubble';
-import { ChatStoreContext } from '@/front/store/ChatStoreContext';
+import { ChatContext } from '@/front/context/ChatContext';
 
 /**
  * Chat messages list with scroll
  */
 const MessagesList = observer(() => {
-  const { messages } = useContext(ChatStoreContext);
+  const { messages } = useContext(ChatContext);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Scroll on new message

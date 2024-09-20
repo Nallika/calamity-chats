@@ -1,0 +1,26 @@
+# Dependency directories
+node_modules/
+
+# Next.js build output
+.next/
+
+# Log files
+*.log
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv environment variable files
+.env
+.env.local
+
+# Mac system files
+.DS_Store
+
+# Editor directories and files
+.vscode/
+
+# Build directories
+build/
+
+# host files
+heroku.yml
