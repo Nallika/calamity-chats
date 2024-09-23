@@ -1,28 +1,39 @@
 'use client';
 
-import React, { createContext, FC, useEffect } from 'react';
-import { ChatStore } from '../store/ChatStore';
+import React, { createContext, useCallback, useEffect } from 'react';
+import { messagesStore } from '../store/MessagesStore';
 import { SocketManager } from '../socket/SocketManager';
+import { ChatContextValue } from '../types';
+import { formatMessageForSocket, getChatId } from '../utils';
 
-type ChatContextProviderProps = {children: React.ReactNode, socketManager: SocketManager}
+export const ChatContext = createContext<Partial<ChatContextValue>>({});
 
-export const ChatContext = createContext<Partial<ChatStore>>({});
-
-export const ChatContextProvider: FC<ChatContextProviderProps> = ({ children, socketManager }) => {
-  const store = new ChatStore(socketManager.sendSocketMessage);
+/**
+ * Provide messages from store and send message handler
+ */
+export const ChatContextProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
 
   useEffect(() => {
-    // Create scoket connection
-    socketManager.subscribeToMessages(store.addMessage);
+    // Init socket connection
+    SocketManager.getInstance(getChatId()).subscribeToMessages(messagesStore.addMessage);
 
-    // Unsubscribe from socket
     return () => {
-      socketManager.cleanup();
+      // Clear connection on unmount
+      SocketManager.getInstance().cleanup();
     };
-  }, [socketManager, store.addMessage]);
+  }, []);
+
+  /**
+   * Format message send to socker and store it
+   */
+  const sendMessage = useCallback((message: string) => {
+    const socketMessage = formatMessageForSocket(message);
+    messagesStore.addMessage(socketMessage);
+    SocketManager.getInstance().sendSocketMessage(socketMessage);
+  }, []);
 
   return (
-    <ChatContext.Provider value={store}>
+    <ChatContext.Provider value={{messages: messagesStore.messages, sendMessage}}>
       {children}
     </ChatContext.Provider>
   );

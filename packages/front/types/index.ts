@@ -1,4 +1,3 @@
-
 export interface MessageBody {
   body: string;
 }
@@ -28,4 +27,9 @@ export type ChatInitData = {
 export type ChatInitResponse = {
   token: string;
   chatId: string;
+}
+
+export type ChatContextValue = {
+  messages: StorredMessage[],
+  sendMessage: (message: string) => void;
 }

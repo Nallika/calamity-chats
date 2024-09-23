@@ -7,18 +7,18 @@ import { serverShell } from './serverShell';
 
 dotenv.config();
 const dev = process.env.NODE_ENV !== 'production';
+const app = express();
+
 const nextAppDir = dev ? path.join(__dirname, '../front') : path.join(__dirname, '../../front');
 
-// Specify the directory of the Next.js application
 const nextApp = next({ 
   dev, 
-  dir: nextAppDir, // Path Next.js app
+  dir: nextAppDir,
 });
+
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().then(() => {
-  const app = express();
-
   // Run server
   serverShell(app);
 

@@ -11,6 +11,9 @@ import * as dotenv from 'dotenv';
 
 const PORT = process.env.PORT;
 
+/**
+ * Take express app as param and run server environment from it
+ */
 export const serverShell = (app: Express) => {
   const server = http.createServer(app);
 
@@ -41,7 +44,9 @@ export const serverShell = (app: Express) => {
       console.log(`> Server is running on port ${PORT}`);
     });
   }
-  
+  /**
+   * Stop server and disconnect db
+   */
   const shutDown = async () => {
     try {
       await disconnectDB();

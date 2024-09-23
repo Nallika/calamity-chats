@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ChatContextProvider } from '../../context/ChatContext';
-import { SocketManager } from '../../socket/SocketManager';
 import { connectChat } from '../../utils/requests';
 import { getChatId } from '../../utils';
 import MessageInput from '../messageInput';
@@ -42,10 +41,8 @@ export const Chat = () => {
     return <Loader />;
   }
 
-  const socketManager = new SocketManager(getChatId());
-
   return (
-    <ChatContextProvider socketManager={socketManager}>
+    <ChatContextProvider>
        <Card>
         <div className='flex-1 overflow-y-auto'>
           <MessagesList />

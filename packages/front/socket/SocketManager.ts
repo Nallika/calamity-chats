@@ -6,37 +6,59 @@ import { AddMessageHandler, SocketMessage } from '../types';
  * Handle scoket connection, send / receive messages
  */
 export class SocketManager {
-  socket: Socket;
+  private static instance: SocketManager;
+  private socket: Socket;
+  private pending: boolean = false;
 
-  constructor(chatId: string) {
+  private constructor(chatId: string) {
     this.socket = io(`/user-${chatId}`);
 
     this.socket.on('connect', () => {
-    //  console.log('Connected to socket', chatId);
+      this.pending = false;
     });
 
-    this.socket.on('disconnect',  () => {
-    //  console.log('DIS Connected from socket');
+    this.socket.on('disconnect', () => {
+      this.pending = false;
     });
 
     this.socket.on('reconnect', () => {
-    //  console.log('Reconnected with socket server');
+      this.pending = false;
     });
   }
 
-  subscribeToMessages(addMessage: AddMessageHandler) {
-    this.socket.on(SOCKET_OUT_MESSAGE, addMessage);
-  }
-
-  sendSocketMessage = (message: SocketMessage) => {
-    this.socket.emit(SOCKET_IN_MESSAGE, message);
+  // Provide a global point of access to the instance
+  public static getInstance(chatId?: string): SocketManager {
+    if (!SocketManager.instance && chatId) {
+      SocketManager.instance = new SocketManager(chatId);
+    }
+    return SocketManager.instance;
   }
 
   /**
-   * @TODO: call it
+   * Initialize subscription with provided callaback to store messages
    */
-  cleanup() {
-    this.socket.off(SOCKET_OUT_MESSAGE);
-    this.socket.disconnect();
+  public subscribeToMessages(addMessage: AddMessageHandler) {
+    // Add check on pending connection to avoid multiple subscription
+    if (!this.pending) {
+      this.socket.on(SOCKET_OUT_MESSAGE, addMessage);
+      this.pending = true;
+    }
+  }
+
+  /**
+   * Send already formatted message to server
+   */
+  public sendSocketMessage = (message: SocketMessage) => {
+    this.socket.emit(SOCKET_IN_MESSAGE, message);
+  };
+
+  /**
+   * Clear connection
+   */
+  public cleanup() {
+    if (this.socket.connected) {
+      this.socket.off(SOCKET_OUT_MESSAGE);
+      this.socket.disconnect();
+    }
   }
 }
