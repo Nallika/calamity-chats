@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "yarn workspace calamity-chats-node start",
-    "dev": "yarn workspace calamity-chats-node dev",
+    "dev": "lerna run --parallel dev",
     "build": "lerna run build --stream --concurrency=1"
   },
   "dependencies": {},

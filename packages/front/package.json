@@ -1,11 +1,12 @@
 {
   "name": "calamity-chats-front",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "tailwindcss -i app/globals.css -o .next/static/css/app/layout.css --watch",
     "lint": "next lint",
     "build": "next build",
+    "next-dev": "next dev",
     "start": "next start"
   },
   "dependencies": {
