@@ -1,10 +1,10 @@
 import { Namespace, Server, Socket } from 'socket.io';
 
+import { NotificationMessage, NotificationType, SocketMessage, SOCKET_MESSAGE } from 'calamity-chats-types';
+
 import BotsManager from './BotsManager';
 import { createChatId } from '../utils'
-import { NotificationMessage, NotificationType, SocketMessage } from '../types';
 import { BOT_NAMES } from '../constants/botConfig';
-import { SOCKET_NOTIFICATION, SOCKET_IN_MESSAGE, SOCKET_OUT_MESSAGE } from '../constants';
 
 /**
  * Class for manage chat.
@@ -33,15 +33,15 @@ export class ChatManager {
       this._updateActive();
       console.log('----> Connected new user, ', this.userId);
 
-      socket.on(SOCKET_NOTIFICATION, (message) => {
+      socket.on(SOCKET_MESSAGE.MESSAGE, (message) => {
         this.onNotification(socket, message);
       })
 
-      socket.on(SOCKET_IN_MESSAGE, (message: SocketMessage) => {
+      socket.on(SOCKET_MESSAGE.MESSAGE, (message: SocketMessage) => {
         this._updateActive();
 
         const responseHandler = async (message: SocketMessage) => {
-          socket.emit(SOCKET_OUT_MESSAGE, message);
+          socket.emit(SOCKET_MESSAGE.MESSAGE, message);
         }
 
         // @todo: add type check
@@ -89,7 +89,7 @@ export class ChatManager {
   }
 
   private sendHandshake = (socket: Socket) => {
-    socket.emit(SOCKET_NOTIFICATION, {type: NotificationType.HANDSHAKE});
+    socket.emit(SOCKET_MESSAGE.NOTIFICATION, {type: NotificationType.HANDSHAKE});
   }
 
   private onNotification = (socket: Socket, messagae: NotificationMessage) => {

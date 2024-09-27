@@ -24,22 +24,6 @@ export type BotsCollection = {
 
 export type SendHandler = (message: string) => void;
 
-type Sender = BOT_NAMES | string;
-
-export type SocketMessage = {
-  sender: Sender;
-  body: string;
-  time: number;
-}
-
-export enum NotificationType {
-  HANDSHAKE = 'handshake',
-}
-
-export interface NotificationMessage {
-  type: NotificationType;
-}
-
 export interface Credentials {
   id: string;
   token: string;

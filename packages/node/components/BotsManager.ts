@@ -1,6 +1,7 @@
 import ChatBot from './ChatBot';
-import { BotsCollection, SocketMessage } from '../types';
+import { BotsCollection } from '../types';
 import { BOT_NAMES } from '../constants/botConfig';
+import { SocketMessage } from 'calamity-chats-types';
 
 /**
  * Class for storring active bots for particular chat

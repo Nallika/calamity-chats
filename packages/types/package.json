@@ -1,0 +1,16 @@
+{
+  "name": "calamity-chats-types",
+  "version": "0.1.1",
+  "description": "types for calamity-chats project",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "main": "build/index.js",
+  "author": "denis.saversky@gmail.com",
+  "license": "MIT"
+}

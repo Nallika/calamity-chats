@@ -1,6 +1,8 @@
 import { io, Socket } from "socket.io-client";
-import { SOCKET_NOTIFICATION, SOCKET_IN_MESSAGE, SOCKET_OUT_MESSAGE } from '../constants';
-import { ConnectedToggle, NotificationMessage, NotificationType, SendMessageHandler, SocketManagerParams, SocketMessage } from '../types';
+
+import { NotificationMessage, NotificationType, SOCKET_MESSAGE } from 'calamity-chats-types';
+
+import { ConnectedToggle, SendMessageHandler, SocketManagerParams, SocketMessage } from '../types';
 
 /**
  * Handle scoket connection, send / receive messages
@@ -50,8 +52,8 @@ export class SocketManager {
   public subscribeToMessages(addMessage: SendMessageHandler) {
     // Add check on pending connection to avoid multiple subscription
     if (!this.pending) {
-      this.socket.on(SOCKET_OUT_MESSAGE, addMessage);
-      this.socket.on(SOCKET_NOTIFICATION, this.onNotification);
+      this.socket.on(SOCKET_MESSAGE.MESSAGE, addMessage);
+      this.socket.on(SOCKET_MESSAGE.NOTIFICATION, this.onNotification);
       this.pending = true;
     }
   }
@@ -60,7 +62,7 @@ export class SocketManager {
    * Send already formatted message to server
    */
   public sendSocketMessage = (message: SocketMessage) => {
-    this.socket.emit(SOCKET_IN_MESSAGE, message);
+    this.socket.emit(SOCKET_MESSAGE.MESSAGE, message);
   };
 
   /**
@@ -68,7 +70,7 @@ export class SocketManager {
    */
   private sendHandshake = () => {
     this.pending = true;
-    this.socket.emit(SOCKET_NOTIFICATION, {type: NotificationType.HANDSHAKE});
+    this.socket.emit(SOCKET_MESSAGE.NOTIFICATION, {type: NotificationType.HANDSHAKE});
   };
 
   private onNotification = (messagae: NotificationMessage) => {
@@ -87,7 +89,8 @@ export class SocketManager {
    */
   public cleanup() {
     if (this.socket.connected) {
-      this.socket.off(SOCKET_OUT_MESSAGE);
+      this.socket.off(SOCKET_MESSAGE.MESSAGE);
+      this.socket.off(SOCKET_MESSAGE.NOTIFICATION);
       this.socket.disconnect();
     }
   }

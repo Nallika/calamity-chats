@@ -6,15 +6,17 @@
     "dev": "tailwindcss -i app/globals.css -o .next/static/css/app/layout.css --watch",
     "lint": "next lint",
     "build": "next build",
+    "typecheck": "tsc",
     "next-dev": "next dev",
     "start": "next start"
   },
   "dependencies": {
     "axios": "^1.7.4",
+    "calamity-chats-types": "file:../types",
     "formik": "^2.4.6",
     "mobx": "^6.13.0",
     "mobx-react-lite": "^4.0.7",
-    "next": "14.2.4",
+    "next": "^14.2.13",
     "react": "^18",
     "react-dom": "^18",
     "socket.io-client": "^4.7.5"
