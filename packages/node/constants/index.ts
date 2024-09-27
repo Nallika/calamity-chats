@@ -15,6 +15,11 @@ export const SOCKET_IN_MESSAGE = `socket_input_message`;
 export const SOCKET_OUT_MESSAGE= `socket_output_message`;
 
 /**
+ * @todo!
+ */
+export const SOCKET_NOTIFICATION= 'socket_notification';
+
+/**
  * @TODO: TBD
  * Socket identity for system message
  */

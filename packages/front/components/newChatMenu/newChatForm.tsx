@@ -10,10 +10,10 @@ import Button from '../ui/button/button';
 import Loader from '../ui/loader';
 
 import Input from '../ui/input';
-import { BotsMap, ChatInitData, ChatInitParams } from '../../types';
+import { BotsMap, ChatInitParams, StartChatForm } from '../../types';
 import BotsList from '../botsList';
 import { initNewChat } from '../../utils/requests';
-import { saveChatId } from '../../utils';
+import { fromatBotsForRequest, saveChatId } from '../../utils';
 
 /**
  * Send request to server and kick off new chat
@@ -32,13 +32,16 @@ export const NewChatForm: React.FC<{chatInitParams: ChatInitParams}> = observer(
    * Send chat init request with provided by user data and.
    * Server return `chatId` if chat creation was successfull redirect to chat page in this case, show error otherwise
    */
-  const handleStartNewChat = async (data: ChatInitData) => {
+  const handleStartNewChat = async (data: StartChatForm) => {
     setLoading(true);
 
-    const chatId = await initNewChat(data);
-    saveChatId(chatId);
+    const { chatId } = await initNewChat({
+      name: data.name,
+      selectedBots: fromatBotsForRequest(data.selectedBots)
+    });
 
     if (chatId) {
+      saveChatId(chatId);
       router.push('/chat');
     } else {
       setLoading(false);

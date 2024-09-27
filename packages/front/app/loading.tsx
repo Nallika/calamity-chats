@@ -1,7 +1,9 @@
 import React from 'react';
 
+import Loader from '../components/ui/loader';
+
 const loading = () => {
-  return <div>loading...</div>;
+  return <Loader />;
 };
 
 export default loading;

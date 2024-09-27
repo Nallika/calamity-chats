@@ -10,9 +10,9 @@ export const SOCKET_IN_MESSAGE = 'socket_input_message';
 export const SOCKET_OUT_MESSAGE= 'socket_output_message';
 
 /**
- * 
+ * @todo!
  */
-export const NOTIFICATION_MESSAGE= 'notification';
+export const SOCKET_NOTIFICATION= 'socket_notification';
 
 const urlPrefix = process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL : '';
 

@@ -1,10 +1,10 @@
-import { Namespace, Server } from 'socket.io';
+import { Namespace, Server, Socket } from 'socket.io';
 
 import BotsManager from './BotsManager';
 import { createChatId } from '../utils'
-import { SocketMessage } from '../types';
+import { NotificationMessage, NotificationType, SocketMessage } from '../types';
 import { BOT_NAMES } from '../constants/botConfig';
-import { SOCKET_IN_MESSAGE, SOCKET_OUT_MESSAGE } from '../constants';
+import { SOCKET_NOTIFICATION, SOCKET_IN_MESSAGE, SOCKET_OUT_MESSAGE } from '../constants';
 
 /**
  * Class for manage chat.
@@ -28,10 +28,14 @@ export class ChatManager {
   /**
    * Kick off actuall chat
    */
-  private _initConnection() {
+  private initConnection() {
     this.namespace.on('connection', (socket) => {
       this._updateActive();
       console.log('----> Connected new user, ', this.userId);
+
+      socket.on(SOCKET_NOTIFICATION, (message) => {
+        this.onNotification(socket, message);
+      })
 
       socket.on(SOCKET_IN_MESSAGE, (message: SocketMessage) => {
         this._updateActive();
@@ -46,13 +50,13 @@ export class ChatManager {
 
       socket.on('disconnect', () => {
         console.log('<---- Disconnected user, ', this.userId);
-        this._cleanup();
       });
     });
   }
 
   /**
    * Clear chat connection
+   * @todo think about call this maybe ?
    */
   private _cleanup() {
     this.namespace.removeAllListeners();
@@ -77,13 +81,26 @@ export class ChatManager {
 
   connectToChat = (chatId: string): boolean => {
     if (chatId === this.chatId) {
-      this._cleanup();
-      this._initConnection();
-
+      this.initConnection();
       return true;
     }
 
     return false;
+  }
+
+  private sendHandshake = (socket: Socket) => {
+    socket.emit(SOCKET_NOTIFICATION, {type: NotificationType.HANDSHAKE});
+  }
+
+  private onNotification = (socket: Socket, messagae: NotificationMessage) => {
+    switch (messagae.type) {
+      case NotificationType.HANDSHAKE:
+        this.sendHandshake(socket);
+        break;
+
+      default:
+        console.error('Unlnown notification ', messagae);
+    }
   }
 
   // @TODO: TBD

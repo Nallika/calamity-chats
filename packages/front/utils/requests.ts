@@ -1,18 +1,18 @@
 import axios from 'axios';
 
 import { URLS } from '../constants';
-import { ChatInitData } from '../types';
+import { ChatInitRequestData } from '../types';
 import { getToken, saveToken } from '.';
 
 
-export const initNewChat = async (data: ChatInitData) => {
+/**
+ * Kick off new chat on backend, return chatId for socket connect
+ */
+export const initNewChat = async (data: ChatInitRequestData): Promise<{chatId: string}> => {
   try {
-    const {name, selectedBots: selectedBotsMap} = data;
-    const selectedBots = Object.keys(selectedBotsMap).filter((botName) => selectedBotsMap[botName] && botName);
-
     const { data: { token, chatId }} = await axios.post(
       URLS.INIT_CHAT, 
-      {name, selectedBots},
+      data,
       {
         headers: {
           'Authorization': getToken()
@@ -22,9 +22,8 @@ export const initNewChat = async (data: ChatInitData) => {
 
     saveToken(token);
 
-    return chatId;
+    return {chatId};
   } catch (error: any) {
-
     console.error('LOAD CHAT ERROR! ', error);
 
     return {
@@ -33,7 +32,7 @@ export const initNewChat = async (data: ChatInitData) => {
   }
 }
 
-export const connectChat = async (chatId: string) => {
+export const connectChat = async (chatId: string): Promise<{connected: boolean}> => {
   try {
     const { data: { connected }} = await axios.post(
       URLS.CONNECT_CHAT, 

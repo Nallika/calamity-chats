@@ -32,6 +32,14 @@ export type SocketMessage = {
   time: number;
 }
 
+export enum NotificationType {
+  HANDSHAKE = 'handshake',
+}
+
+export interface NotificationMessage {
+  type: NotificationType;
+}
+
 export interface Credentials {
   id: string;
   token: string;

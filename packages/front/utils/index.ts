@@ -1,4 +1,4 @@
-import { SocketMessage, StorredMessage } from '../types';
+import { BotsMap, SocketMessage, StorredMessage } from '../types';
 import { CHAT_ID_HASH, TOKEN } from '../constants';
 
 export { initNewChat, connectChat } from './requests';
@@ -26,6 +26,8 @@ export const formatMessageForSocket = (message: string): SocketMessage => {
     time: Date.now()
   }
 }
+
+export const fromatBotsForRequest = (selectedBots: BotsMap) => Object.keys(selectedBots).filter((botName) => selectedBots[botName] && botName);
 
 export const saveChatId = (chatId: string) => {
   localStorage.setItem(CHAT_ID_HASH, chatId);

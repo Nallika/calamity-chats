@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
-import { SOCKET_IN_MESSAGE, SOCKET_OUT_MESSAGE } from '../constants';
-import { AddMessageHandler, SocketMessage } from '../types';
+import { SOCKET_NOTIFICATION, SOCKET_IN_MESSAGE, SOCKET_OUT_MESSAGE } from '../constants';
+import { ConnectedToggle, NotificationMessage, NotificationType, SendMessageHandler, SocketManagerParams, SocketMessage } from '../types';
 
 /**
  * Handle scoket connection, send / receive messages
@@ -8,13 +8,22 @@ import { AddMessageHandler, SocketMessage } from '../types';
 export class SocketManager {
   private static instance: SocketManager;
   private socket: Socket;
+  // Pending connection flag, used to prevent multiple connections
   private pending: boolean = false;
+  // Forward connection status callback
+  setConnected: ConnectedToggle;
 
-  private constructor(chatId: string) {
-    this.socket = io(`/user-${chatId}`);
+  private constructor({chatId, setConnected}: SocketManagerParams) {
+    this.socket = io(`/user-${chatId}`, {
+      reconnection: true,
+      reconnectionAttempts: 1,
+      reconnectionDelay: 1000,
+    });
+    this.setConnected = setConnected;
 
     this.socket.on('connect', () => {
       this.pending = false;
+      this.sendHandshake();
     });
 
     this.socket.on('disconnect', () => {
@@ -27,9 +36,10 @@ export class SocketManager {
   }
 
   // Provide a global point of access to the instance
-  public static getInstance(chatId?: string): SocketManager {
-    if (!SocketManager.instance && chatId) {
-      SocketManager.instance = new SocketManager(chatId);
+  public static getInstance(params?: SocketManagerParams): SocketManager {
+    // @TODO: check params
+    if (!SocketManager.instance && !!params) {
+      SocketManager.instance = new SocketManager(params);
     }
     return SocketManager.instance;
   }
@@ -37,10 +47,11 @@ export class SocketManager {
   /**
    * Initialize subscription with provided callaback to store messages
    */
-  public subscribeToMessages(addMessage: AddMessageHandler) {
+  public subscribeToMessages(addMessage: SendMessageHandler) {
     // Add check on pending connection to avoid multiple subscription
     if (!this.pending) {
       this.socket.on(SOCKET_OUT_MESSAGE, addMessage);
+      this.socket.on(SOCKET_NOTIFICATION, this.onNotification);
       this.pending = true;
     }
   }
@@ -51,6 +62,25 @@ export class SocketManager {
   public sendSocketMessage = (message: SocketMessage) => {
     this.socket.emit(SOCKET_IN_MESSAGE, message);
   };
+
+  /**
+   * Send already formatted message to server
+   */
+  private sendHandshake = () => {
+    this.pending = true;
+    this.socket.emit(SOCKET_NOTIFICATION, {type: NotificationType.HANDSHAKE});
+  };
+
+  private onNotification = (messagae: NotificationMessage) => {
+    switch (messagae.type) {
+      case NotificationType.HANDSHAKE:
+        this.setConnected(true);
+        break;
+
+      default:
+        console.error('Unlnown notification ', messagae);
+    }
+  }
 
   /**
    * Clear connection

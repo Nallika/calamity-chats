@@ -31,8 +31,11 @@ export const initializeChat = [
 
       const chatManager = getOrCreateChatManager(io, id);
       const chatId = chatManager.setUpChat(selectedBots);
+      const connected = chatManager.connectToChat(chatId);
   
-      return res.status(200).json({ token, chatId });
+      if (connected) {
+        return res.status(200).json({ token, chatId });
+      }
     }
       
     return res.status(500).json({ error: 'Unable to init chat' });

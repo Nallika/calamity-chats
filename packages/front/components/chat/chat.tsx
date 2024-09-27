@@ -1,20 +1,19 @@
 'use client';
-import { useRouter } from 'next/navigation'
-import React, { useCallback, useEffect, useState } from 'react';
 
-import { ChatContextProvider } from '../../context/ChatContext';
-import { connectChat } from '../../utils/requests';
-import { getChatId } from '../../utils';
+import React, { useCallback, useContext, useEffect } from 'react';
+import { useRouter } from 'next/navigation'
+
 import MessageInput from '../messageInput';
 import MessagesList from '../messagesList';
 import Card from '../ui/card';
 import Loader from '../ui/loader/loader';
+import { ChatContext } from '../../context/ChatContext';
 
 /**
  * Send request to server and kick off new chat
  */
 export const Chat = () => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const { loading, error } = useContext(ChatContext);
   const router = useRouter();
 
   const goHome = useCallback(() => {
@@ -22,35 +21,23 @@ export const Chat = () => {
   }, [router])
 
   useEffect(() => {
-    const id = getChatId();
-
-    if (!id) {
+    if (error) {
       goHome();
     }
-
-    connectChat(id).then(({connected}) => {
-      if (!connected) {
-        goHome();
-      } else {
-        setLoading(false);
-      }
-    });
-  }, [goHome]);
+  }, [error, goHome]);
 
   if (loading) {
     return <Loader />;
   }
 
   return (
-    <ChatContextProvider>
-       <Card>
-        <div className='flex-1 overflow-y-auto'>
-          <MessagesList />
-        </div>
-        <div className='flex'>
-          <MessageInput />
-        </div>
-      </Card>
-    </ChatContextProvider>
+    <Card>
+      <div className='flex-1 overflow-y-auto'>
+        <MessagesList />
+      </div>
+      <div className='flex'>
+        <MessageInput />
+      </div>
+    </Card>
   );
 };

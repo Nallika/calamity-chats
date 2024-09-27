@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Chat from '../../components/chat';
+import ChatWrapper from '../../components/chatWrapper';
 
 const ChatPage = () => {
   return (
-    <Chat />
+    <ChatWrapper />
   );
 }
 
