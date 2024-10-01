@@ -7,11 +7,21 @@ import { ChatManager } from './ChatManager';
 // Map for active user intances
 const chatInstances = new Map();
 
-// Pick instance from map to prevent multiple chat instances for single user
-export const getOrCreateChatManager = (io: Server, userId: string): ChatManager => {
+export const createChatManager = (io: Server, userId: string): ChatManager => {
+  // Maitain only one chat connection per user
+  if (chatInstances.has(userId)) {
+    removeChatInstance(userId);
+  }
 
+  chatInstances.set(userId, new ChatManager(io, userId));
+
+  return chatInstances.get(userId);
+}
+
+export const getChatManager = (userId: string): ChatManager | false => {
   if (!chatInstances.has(userId)) {
-    chatInstances.set(userId, new ChatManager(io, userId));
+    console.error(`There is no active chat ssesion for user' ${userId}`);
+    return false;
   }
 
   return chatInstances.get(userId);

@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Chat from '../../components/chat';
+import VersusChat from '../../../components/versusChat';
 
 const ChatPage = () => {
   return (
-    <Chat />
+    <VersusChat />
   );
 }
 

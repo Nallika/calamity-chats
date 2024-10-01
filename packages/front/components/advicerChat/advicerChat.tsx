@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useCallback, useContext, useEffect } from 'react';
-import { useRouter } from 'next/navigation'
+import React, { useContext } from 'react';
 
 import MessageInput from '../messageInput';
 import MessagesList from '../messagesList';
@@ -12,7 +11,7 @@ import { ChatContext } from '../../context/ChatContext';
 /**
  * Send request to server and kick off new chat
  */
-export const Chat = () => {
+export const AdvicerChat = () => {
   const { loading } = useContext(ChatContext);
 
   if (loading) {

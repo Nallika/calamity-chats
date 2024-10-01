@@ -1,10 +1,12 @@
 'use client';
 
-import React, { createContext, useCallback, useEffect, useState } from 'react';
-import { messagesStore } from '../store/MessagesStore';
-import { SocketManager } from '../socket/SocketManager';
+import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
+
+import MessagesStore from '../store/MessagesStore';
 import { ChatContextValue } from '../types';
-import { connectChat, formatMessageForSocket, getChatId } from '../utils';
+import { connectChat, formatMessageForSocket, getChatId, getChatModeByPath } from '../utils';
+import { ChatManager } from '../socket/ChatManager';
 
 export const ChatContext = createContext<ChatContextValue>({
   messages: [],
@@ -15,59 +17,55 @@ export const ChatContext = createContext<ChatContextValue>({
 });
 
 /**
- * Provide messages from store and send message handler
+ * Chat context store and provide messages state and send message handler
+ * Also maitain connection state and run re-connect if it neccessary
  */
 export const ChatContextProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(false);
   const [error, setIsError] = useState(false);
 
-  // Create socketManager instance
-  const socketManager = SocketManager.getInstance({
-    chatId: getChatId(),
-    setConnected
-  });
+  const path = usePathname();
+  const chatId = getChatId();
+  const mode = getChatModeByPath(path);
 
-  // Attmept to re-connect if still not connected after 2 seconds
-  useEffect(() => {
-    if (connected) {
-      setLoading(false);
-    }
-
-    const checkConnectTimeout = setTimeout(() => {
-      if (!connected) {
-        attmeptToReConnect();
-      }
-    }, 2000);
-
-    return () => {
-      clearTimeout(checkConnectTimeout);
-    }
-  }, [connected]);
-
-  useEffect(() => {
-    // Init socket connection
-    socketManager.subscribeToMessages(messagesStore.addMessage);
-
-    return () => {
-      // Clear connection on unmount
-      socketManager.cleanup();
-    };
-  }, [socketManager]);
+  const messagesStore = useMemo(() => MessagesStore.createInstance(chatId), [chatId]);
+  const chatManager = useMemo(() => ChatManager.createInstance({chatId, mode, setConnected}), [chatId, mode]);
 
   /**
    * Send request to re-comment, if attempt failed set error state
    */
-  const attmeptToReConnect = useCallback(async () => {
-    const {connected: connectedResponse} = await connectChat(getChatId());
-    setConnected(connectedResponse);
-    setLoading(false);
+  const reConnectChat = useCallback(async () => {
+    const {connected: connectedResponse} = await connectChat({chatId, mode});
 
     if (!connectedResponse) {
       setIsError(true);
+      // @todo: add error modal
       console.error('Unable to connect to socket!');
     }
-  }, []);
+  }, [chatId, mode]);
+
+  useEffect(() => {
+    if (connected) {
+      setLoading(false);
+    }
+  }, [connected]);
+
+  useEffect(() => {
+    // If chat wasn't initialized in this session we should send re-conect request
+    if (!messagesStore.isInitialized) {
+      reConnectChat();
+      messagesStore.setIsInitialized();
+    }
+
+    // Init socket connection
+    chatManager.subscribeToMessages(messagesStore.addMessage);
+
+    return () => {
+      // Clear connection on unmount
+      chatManager.cleanup();
+    };
+  }, [chatManager, messagesStore, reConnectChat]);
 
   /**
    * Format message send to socker and store it
@@ -75,8 +73,8 @@ export const ChatContextProvider: React.FC<{children: React.ReactNode}> = ({ chi
   const sendMessage = useCallback((message: string) => {
     const socketMessage = formatMessageForSocket(message);
     messagesStore.addMessage(socketMessage);
-    socketManager.sendSocketMessage(socketMessage);
-  }, [socketManager]);
+    chatManager.sendSocketMessage(socketMessage);
+  }, [chatManager, messagesStore]);
 
   return (
     <ChatContext.Provider value={{

@@ -1,6 +1,6 @@
 import { Namespace, Server, Socket } from 'socket.io';
 
-import { NotificationMessage, NotificationType, SocketMessage, SOCKET_MESSAGE } from 'calamity-chats-types';
+import { ChatModeEnum, NotificationMessage, NotificationType, SocketMessage, SocketMessageEnum } from 'calamity-chats-types';
 
 import BotsManager from './BotsManager';
 import { createChatId } from '../utils'
@@ -14,10 +14,15 @@ export class ChatManager {
 
   userId: string;
   chatId: string;
+  mode: ChatModeEnum | null = null;
+
   namespace: Namespace;
 
   lastActive?: number;
+
   botsManager?: BotsManager;
+
+  connected: boolean = false;
 
   constructor(io: Server, userId: string) {
     this.userId = userId;
@@ -30,35 +35,36 @@ export class ChatManager {
    */
   private initConnection() {
     this.namespace.on('connection', (socket) => {
+      this.connected = true;
       this._updateActive();
-      console.log('----> Connected new user, ', this.userId);
+      console.log('----> Connected new user, ', {userId: this.userId, chatId: this.chatId});
 
-      socket.on(SOCKET_MESSAGE.MESSAGE, (message) => {
+      socket.on(SocketMessageEnum.NOTIFICATION, (message) => {
         this.onNotification(socket, message);
       })
 
-      socket.on(SOCKET_MESSAGE.MESSAGE, (message: SocketMessage) => {
+      socket.on(SocketMessageEnum.INPUT_MESSAGE, (message: SocketMessage) => {
         this._updateActive();
 
         const responseHandler = async (message: SocketMessage) => {
-          socket.emit(SOCKET_MESSAGE.MESSAGE, message);
+          socket.emit(SocketMessageEnum.OUTPUT_MESSAGE, message);
         }
 
-        // @todo: add type check
         this.botsManager?.reactOnMessage(message, responseHandler);
       });
 
       socket.on('disconnect', () => {
+        this.connected = false;
         console.log('<---- Disconnected user, ', this.userId);
+        this.cleanup();
       });
     });
   }
 
   /**
    * Clear chat connection
-   * @todo think about call this maybe ?
    */
-  private _cleanup() {
+  private cleanup() {
     this.namespace.removeAllListeners();
   }
 
@@ -70,32 +76,36 @@ export class ChatManager {
   }
 
   /**
-   * Add provided bots and create new chat connection
+   * Add provided bots and set mode
    */
-  setUpChat = (bots: Array<BOT_NAMES>) => {
-    console.log(`----> Set up chat for ${this.userId}', with `, bots);
+  setUpChat = (bots: Array<BOT_NAMES>, mode: ChatModeEnum) => {
+    this.mode = mode;
     this.botsManager = new BotsManager(bots);
 
     return this.chatId;
   }
 
-  connectToChat = (chatId: string): boolean => {
-    if (chatId === this.chatId) {
-      this.initConnection();
-      return true;
+  /**
+   * Validate input data and run connect to chat
+   */
+  connectToChat = (chatId: string, mode: ChatModeEnum): boolean => {
+    if (!chatId || chatId !== this.chatId || !mode || mode !== this.mode) {
+      console.error('Cannot connect to chat, due missmatched data ', {chatId: this.chatId, mode: this.mode});
+      return false;
     }
 
-    return false;
+    this.initConnection();
+    return true;
   }
 
-  private sendHandshake = (socket: Socket) => {
-    socket.emit(SOCKET_MESSAGE.NOTIFICATION, {type: NotificationType.HANDSHAKE});
+  private sendHandshake = (socket: Socket, messagae: NotificationMessage) => {
+    socket.emit(SocketMessageEnum.NOTIFICATION, {type: NotificationType.HANDSHAKE});
   }
 
   private onNotification = (socket: Socket, messagae: NotificationMessage) => {
     switch (messagae.type) {
       case NotificationType.HANDSHAKE:
-        this.sendHandshake(socket);
+        this.sendHandshake(socket, messagae);
         break;
 
       default:

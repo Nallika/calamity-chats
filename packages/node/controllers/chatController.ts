@@ -3,7 +3,7 @@ import { body, validationResult } from 'express-validator';
 
 import { getOrRetreiveUser } from '../components/UserModel';
 import { verifyToken } from './verifyTokenMiddleware';
-import { getOrCreateChatManager } from '../components/ChatStorage';
+import { createChatManager, getChatManager } from '../components/ChatStorage';
 
 
 /**
@@ -22,16 +22,16 @@ export const initializeChat = [
     // @ts-ignore  @todo: for dev mode
     const io = req.io;
     const token = req.headers['authorization'] as string;
-    const {selectedBots} = req.body;
+    const {mode, selectedBots} = req.body;
 
     const user = await getOrRetreiveUser(token);
 
     if (user) {
       const {id, token} = user;
 
-      const chatManager = getOrCreateChatManager(io, id);
-      const chatId = chatManager.setUpChat(selectedBots);
-      const connected = chatManager.connectToChat(chatId);
+      const chatManager = createChatManager(io, id);
+      const chatId = chatManager.setUpChat(selectedBots, mode);
+      const connected = chatManager.connectToChat(chatId, mode);
   
       if (connected) {
         return res.status(200).json({ token, chatId });
@@ -42,6 +42,9 @@ export const initializeChat = [
   }
 ];
 
+/**
+ * 
+ */
 export const connectChat = [
   verifyToken,
 
@@ -55,13 +58,15 @@ export const connectChat = [
     }
 
     const { userId } = res.locals;
-    const { chatId } = req.body;
+    const { chatId, mode } = req.body;
 
-    // @ts-ignore  @todo: for dev mode
-    const io = req.io;
+    const chatManager = getChatManager(userId);
 
-    const chatManager = getOrCreateChatManager(io, userId);
-    const connected = chatManager.connectToChat(chatId);
+    if (!chatManager) {
+      return res.status(500).json({ error: 'Unable to start chat' });
+    }
+
+    const connected = chatManager.connectToChat(chatId, mode);
 
     if (connected) {
       return res.status(200).json({ connected });

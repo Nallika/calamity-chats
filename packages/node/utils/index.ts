@@ -39,4 +39,5 @@ export const requestToOpenAI = async (prompt: string, config: BotConfig): Promis
   }
 }
 
-export const createChatId = (userId: string):string => crypto.createHash('md5').update(userId).digest('hex');
+export const createChatId = (userId: string):string => 
+  crypto.createHash('md5').update(`${userId}_${Date.now()}`).digest('hex');

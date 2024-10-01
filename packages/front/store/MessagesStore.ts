@@ -6,15 +6,41 @@ import { formatMessageForStorring,  } from '../utils';
 /**
  * Storring chat messages, add new one
  */
-class MessagesStore {
-  messages: StorredMessage[] = [];
+export default class MessagesStore {
+  
+  private static chatId: string;
+  private static instance: MessagesStore;
 
-  constructor() {
+  public messages: StorredMessage[] = [];
+  public isInitialized = false;
+
+  constructor(chatId: string) {
+    MessagesStore.chatId = chatId;
 
     makeAutoObservable(this, {
       messages: observable,
+      isInitialized: observable,
       addMessage: action,
+      setIsInitialized: action,
     });
+  }
+
+  /**
+   * Create singleton instance for each new chat, to maintain own history for each uniq chat
+   */
+  public static createInstance(chatId: string): MessagesStore {
+    if (!MessagesStore.instance || MessagesStore.chatId !== chatId) {
+      MessagesStore.instance = new MessagesStore(chatId);
+    }
+    
+    return MessagesStore.instance;
+  }
+
+  /**
+   * Add message from socket to store
+   */
+  setIsInitialized = () => {
+    this.isInitialized = true;
   }
 
   /**
@@ -25,7 +51,3 @@ class MessagesStore {
     this.messages.push(formattedMessage);
   }
 }
-
-const messagesStore = new MessagesStore();
-
-export { messagesStore };

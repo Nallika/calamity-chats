@@ -1,6 +1,7 @@
+import { ChatModeEnum } from 'calamity-chats-types';
+
 import { BotsMap, SocketMessage, StorredMessage } from '../types';
 import { CHAT_ID_HASH, TOKEN } from '../constants';
-
 export { initNewChat, connectChat } from './requests';
 
 export const formatMessageForStorring = (message: SocketMessage): StorredMessage => {
@@ -47,4 +48,32 @@ export const getToken = () => {
   const token = localStorage && localStorage.getItem(TOKEN);
 
   return token || '';
+}
+
+export const getChatUrl = (mode: string) => {
+  switch (mode) {
+    case ChatModeEnum.REGULAR:
+      return '/chat';
+    case ChatModeEnum.VERSUS:
+      return '/chat/versus';
+    case ChatModeEnum.PROS_CONS:
+      return '/chat/advicer';
+    default:
+      console.error('wrong mode: ', mode);
+      return '/';
+  }
+}
+
+export const getChatModeByPath = (path: any): ChatModeEnum => {
+  switch (path) {
+    case '/chat':
+      return ChatModeEnum.REGULAR;
+    case '/chat/versus':
+      return ChatModeEnum.VERSUS;
+    case '/chat/advicer':
+      return ChatModeEnum.PROS_CONS;
+    default:
+      console.error('wrong path: ', path);
+      return ChatModeEnum.REGULAR;
+  }
 }

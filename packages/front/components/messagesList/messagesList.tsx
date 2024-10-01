@@ -1,7 +1,7 @@
 import React, { useContext, useLayoutEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 
-import MessageBubble from '../ui/messageBubble';
+import MessageBubble from '../messageBubble';
 import { ChatContext } from '../../context/ChatContext';
 
 /**

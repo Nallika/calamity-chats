@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-import { URLS } from '../constants';
-import { ChatInitRequestData } from '../types';
+import { ChatInitRequestData, StartChatRequestData } from 'calamity-chats-types';
+
+import { API } from '../constants';
 import { getToken, saveToken } from '.';
 
 
@@ -11,7 +12,7 @@ import { getToken, saveToken } from '.';
 export const initNewChat = async (data: ChatInitRequestData): Promise<{chatId: string}> => {
   try {
     const { data: { token, chatId }} = await axios.post(
-      URLS.INIT_CHAT, 
+      API.INIT_CHAT, 
       data,
       {
         headers: {
@@ -32,11 +33,11 @@ export const initNewChat = async (data: ChatInitRequestData): Promise<{chatId: s
   }
 }
 
-export const connectChat = async (chatId: string): Promise<{connected: boolean}> => {
+export const connectChat = async (data: StartChatRequestData): Promise<{connected: boolean}> => {
   try {
     const { data: { connected }} = await axios.post(
-      URLS.CONNECT_CHAT, 
-      {chatId},
+      API.CONNECT_CHAT, 
+      data,
       {
         headers: {
           'Authorization': getToken()

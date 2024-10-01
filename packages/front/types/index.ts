@@ -1,3 +1,5 @@
+import { ChatModeEnum } from 'calamity-chats-types';
+
 /**
  * Base message structure
  */
@@ -36,8 +38,9 @@ export type SendMessageHandler = (message: SocketMessage) => void;
 /**
  * Data for chat init page (index)
  */
-export type ChatInitParams = {
+export type SetUpChatParams = {
   bots: string[];
+  modes: ChatModeEnum[];
 }
 
 /**
@@ -49,16 +52,8 @@ export type BotsMap = Record<string, boolean>;
  * Data that we send to connect chnat
  */
 export type StartChatForm = {
-  name: string;
+  mode: ChatModeEnum;
   selectedBots: BotsMap;
-}
-
-/**
- * Data that we send to connect chnat
- */
-export type ChatInitRequestData = {
-  name: string;
-  selectedBots: string[];
 }
 
 /**
@@ -74,7 +69,8 @@ export type ChatContextValue = {
 
 export type ConnectedToggle = (connected: boolean) => void;
 
-export type SocketManagerParams = {
-  chatId: string;
-  setConnected: ConnectedToggle;
+export type ChatManagerParams = {
+  chatId: string,
+  mode: ChatModeEnum,
+  setConnected: ConnectedToggle
 }

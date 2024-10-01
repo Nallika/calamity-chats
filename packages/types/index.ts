@@ -21,9 +21,10 @@ export type ChatInitParams = {
   bots: string[];
 }
 
-export enum SOCKET_MESSAGE {
+export enum SocketMessageEnum {
   NOTIFICATION= 'socket_notification',
-  MESSAGE = 'message'
+  INPUT_MESSAGE = 'input_message',
+  OUTPUT_MESSAGE = 'output_message'
 }
 
 export enum NotificationType {
@@ -34,6 +35,24 @@ export interface NotificationMessage {
   type: NotificationType;
 }
 
-export interface TestType {
-  type: NotificationType;
+export enum ChatModeEnum {
+  VERSUS = 'versus',
+  PROS_CONS = 'pros_cons',
+  REGULAR = 'regular'
+}
+
+/**
+ * Data that we send to connect chnat
+ */
+export type ChatInitRequestData = {
+  mode: ChatModeEnum;
+  selectedBots: string[];
+}
+
+/**
+ * Data that we send to connect chnat
+ */
+export type StartChatRequestData = {
+  mode: ChatModeEnum;
+  chatId: string;
 }

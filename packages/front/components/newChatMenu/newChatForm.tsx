@@ -3,72 +3,59 @@
 import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react';
-import { useFormik } from 'formik';
+import { Formik, Form } from 'formik';
+
+import { ChatModeEnum } from 'calamity-chats-types';
 
 import Card from '../ui/card';
 import Button from '../ui/button/button';
 import Loader from '../ui/loader';
-
-import Input from '../ui/input';
-import { BotsMap, ChatInitParams, StartChatForm } from '../../types';
+import { BotsMap, SetUpChatParams, StartChatForm } from '../../types';
 import BotsList from '../botsList';
+import ModeSelector from '../modeSelector';
 import { initNewChat } from '../../utils/requests';
-import { fromatBotsForRequest, saveChatId } from '../../utils';
+import { fromatBotsForRequest, getChatUrl, saveChatId } from '../../utils';
+import MessagesStore from '../../store/MessagesStore';
 
 /**
  * Send request to server and kick off new chat
  */
-export const NewChatForm: React.FC<{chatInitParams: ChatInitParams}> = observer(({chatInitParams}) => {
+export const NewChatForm: React.FC<{setUpChatParams: SetUpChatParams}> = observer(({setUpChatParams}) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const { bots } = chatInitParams;
+  const { bots, modes } = setUpChatParams;
   const botsMap = bots.reduce((acc: BotsMap, bot) => {
     acc[bot] = true;
     return acc;
   }, {});
 
+  const initialValues = {
+    mode: ChatModeEnum.REGULAR,
+    selectedBots: botsMap
+  };
+
   /**
-   * Send chat init request with provided by user data and.
+   * Send chat init request with provided by user data
    * Server return `chatId` if chat creation was successfull redirect to chat page in this case, show error otherwise
    */
   const handleStartNewChat = async (data: StartChatForm) => {
     setLoading(true);
 
     const { chatId } = await initNewChat({
-      name: data.name,
+      mode: data.mode,
       selectedBots: fromatBotsForRequest(data.selectedBots)
     });
 
     if (chatId) {
+      // Init store to point ChatContext that chat was initialized in this session
+      MessagesStore.createInstance(chatId).setIsInitialized();
       saveChatId(chatId);
-      router.push('/chat');
+      router.push(getChatUrl(data.mode));
     } else {
       setLoading(false);
+      // @todo: show error
     }
-  }
-
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      selectedBots: botsMap
-
-    },
-    onSubmit: handleStartNewChat,
-  });
-
-  const handleSelectBotClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-    const selectedBotsState = formik.values['selectedBots'];
-    const selectedBotsCount = Object.values(selectedBotsState).reduce((acc, val) => acc + Number(val), 0);
-    const newSelectedBotsCount = checked ? selectedBotsCount + 1 : selectedBotsCount - 1;
-
-    if (newSelectedBotsCount < 1) {
-      event.preventDefault();
-      return;
-    }
-  
-    formik.setFieldValue(name, checked);
   }
 
   if (loading) {
@@ -76,35 +63,25 @@ export const NewChatForm: React.FC<{chatInitParams: ChatInitParams}> = observer(
   }
 
   return (
-  <div className="h-full flex flex-col items-center justify-center">
-    <div>
+    <div className="h-full flex flex-col items-center justify-center">
+      <div>
         <Card className="h-auto w-auto">
-          <form onSubmit={formik.handleSubmit}>
-            
-            <div className="flex flex-row justify-between">
-              <label className="p-4">
-                Chose bots to chat:
-              </label>
-              <BotsList bots={bots} onChange={handleSelectBotClick} />
-            </div>
-            
-            <div className="flex flex-row justify-between">
-              <div className="p-4">
-                Your name:
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleStartNewChat}
+        >
+            <Form>
+              <div className="pb-4 grid grid-cols-2 grid-rows-2 gap-4 items-center">
+                <label>Chose bots to chat:</label>
+                <BotsList bots={bots} />
+                <label>Chat mode:</label>
+                <ModeSelector modes={modes} />
               </div>
-              <Input 
-                className="w-48"
-                name="name"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-            </div>
-            
-            <div className="flex justify-center">
-              <Button type="submit" title="Start new chat" clickHandler={formik.handleSubmit}></Button>
-            </div>
-          </form>
+              <div className="flex justify-center">
+                <Button type="submit" title="Start new chat"></Button>
+              </div>
+            </Form>
+          </Formik>
         </Card>
       </div>
     </div>

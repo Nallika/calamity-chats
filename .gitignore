@@ -1,13 +1,12 @@
 # Dependency directories
 node_modules/
 
-# Next.js build output
-.next/
-
 # Log files
 *.log
 yarn-debug.log*
 yarn-error.log*
+tsconfig.tsbuildinfo
+package-lock.json
 
 # dotenv environment variable files
 .env
@@ -21,6 +20,7 @@ yarn-error.log*
 
 # Build directories
 build/
+.next/
 
 # host files
 heroku.yml

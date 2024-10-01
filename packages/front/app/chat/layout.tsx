@@ -1,16 +1,18 @@
 'use client';
+
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ChatContextProvider } from '../../context/ChatContext';
 import { getChatId } from '../../utils';
-import Loader from '../ui/loader/loader';
-import { Chat } from '../chat/chat';
+import Loader from '../../components/ui/loader/loader';
 
 /**
- * Send request to server and kick off new chat
+ * Wrap chat context and check is chat id exists
  */
-export const ChatWrapper = () => {
+export default function Layout ({ children }: Readonly<{
+  children: React.ReactNode;
+}>) {
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -37,7 +39,7 @@ export const ChatWrapper = () => {
 
   return (
     <ChatContextProvider>
-       <Chat />
+       {children}
     </ChatContextProvider>
   );
 };

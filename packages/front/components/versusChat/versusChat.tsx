@@ -12,7 +12,7 @@ import { ChatContext } from '../../context/ChatContext';
 /**
  * Send request to server and kick off new chat
  */
-export const Chat = () => {
+export const VersusChat = () => {
   const { loading } = useContext(ChatContext);
 
   if (loading) {
