@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-import { NotificationMessage, NotificationType, SocketMessageEnum, ChatModeEnum } from 'calamity-chats-types';
+import { NotificationMessage, NotificationType, SocketMessageEnum, ChatModeEnum } from '@calamity-chats/types';
 
 import { ChatManagerParams, ConnectedToggle, SendMessageHandler, SocketMessage } from '../types';
 

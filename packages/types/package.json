@@ -1,5 +1,5 @@
 {
-  "name": "calamity-chats-types",
+  "name": "@calamity-chats/types",
   "version": "0.1.1",
   "description": "types for calamity-chats project",
   "private": true,

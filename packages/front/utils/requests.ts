@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { ChatInitRequestData, StartChatRequestData } from 'calamity-chats-types';
+import { ChatInitRequestData, StartChatRequestData } from '@calamity-chats/types';
 
 import { API } from '../constants';
 import { getToken, saveToken } from '.';

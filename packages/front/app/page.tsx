@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ChatModeEnum } from 'calamity-chats-types';
+import { ChatModeEnum } from '@calamity-chats/types';
 
 import NewChatForm from '../components/newChatMenu';
 import { API } from '../constants';

@@ -1,6 +1,6 @@
 import { Namespace, Server, Socket } from 'socket.io';
 
-import { ChatModeEnum, NotificationMessage, NotificationType, SocketMessage, SocketMessageEnum } from 'calamity-chats-types';
+import { ChatModeEnum, NotificationMessage, NotificationType, SocketMessage, SocketMessageEnum } from '@calamity-chats/types';
 
 import BotsManager from './BotsManager';
 import { createChatId } from '../utils'

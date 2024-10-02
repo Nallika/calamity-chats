@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react';
 import { Formik, Form } from 'formik';
 
-import { ChatModeEnum } from 'calamity-chats-types';
+import { ChatModeEnum } from '@calamity-chats/types';
 
 import Card from '../ui/card';
 import Button from '../ui/button/button';

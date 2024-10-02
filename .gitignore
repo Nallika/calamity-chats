@@ -21,6 +21,7 @@ package-lock.json
 # Build directories
 build/
 .next/
+out/
 
 # host files
 heroku.yml

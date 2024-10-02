@@ -1,4 +1,4 @@
-import { ChatModeEnum } from 'calamity-chats-types';
+import { ChatModeEnum } from '@calamity-chats/types';
 
 /**
  * Base message structure

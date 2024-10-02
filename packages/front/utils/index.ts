@@ -1,4 +1,4 @@
-import { ChatModeEnum } from 'calamity-chats-types';
+import { ChatModeEnum } from '@calamity-chats/types';
 
 import { BotsMap, SocketMessage, StorredMessage } from '../types';
 import { CHAT_ID_HASH, TOKEN } from '../constants';

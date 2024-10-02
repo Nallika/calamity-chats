@@ -1,5 +1,5 @@
 {
-  "name": "calamity-chats-front",
+  "name": "@calamity-chats/front",
   "version": "0.1.1",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "axios": "^1.7.4",
-    "calamity-chats-types": "file:../types",
+    "@calamity-chats/types": "0.1.1",
     "formik": "^2.4.6",
     "mobx": "^6.13.0",
     "mobx-react-lite": "^4.0.7",

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useField, useFormikContext } from 'formik';
 
-import { ChatModeEnum } from 'calamity-chats-types';
+import { ChatModeEnum } from '@calamity-chats/types';
 
 /**
  * Select box for chat modes

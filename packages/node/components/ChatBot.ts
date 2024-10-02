@@ -1,7 +1,7 @@
 import { requestToOpenAI } from '../utils';
 import { BotConfig } from '../types';
 import { BOT_CONFIG_MAP, BOT_NAMES } from '../constants/botConfig';
-import { SocketMessage } from 'calamity-chats-types';
+import { SocketMessage } from '@calamity-chats/types';
 
 /**
  * Behold!

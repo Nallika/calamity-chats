@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { ChatModeEnum } from 'calamity-chats-types';
+import { ChatModeEnum } from '@calamity-chats/types';
 
 import { BOT_NAMES } from '../constants/botConfig';
 

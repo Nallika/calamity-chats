@@ -8,10 +8,10 @@
     "packages/types"
   ],
   "scripts": {
-    "start": "yarn workspace calamity-chats-node start",
+    "start": "yarn workspace @calamity-chats/node start",
     "dev": "lerna run --parallel dev",
     "build": "lerna run build --stream --concurrency=1",
-    "rebuild-types": "lerna run build --scope calamity-chats-types && lerna exec --scope calamity-chats-front -- npm install && lerna exec --scope calamity-chats-node -- npm install"
+    "rebuild-types": "yarn workspace @calamity-chats/types build"
   },
   "dependencies": {},
   "devDependencies": {
