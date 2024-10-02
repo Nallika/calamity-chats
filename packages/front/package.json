@@ -1,6 +1,6 @@
 {
   "name": "@calamity-chats/front",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "tailwindcss -i app/globals.css -o .next/static/css/app/layout.css --watch",
@@ -11,8 +11,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@calamity-chats/types": "^0.1.2",
     "axios": "^1.7.4",
-    "@calamity-chats/types": "0.1.1",
     "formik": "^2.4.6",
     "mobx": "^6.13.0",
     "mobx-react-lite": "^4.0.7",
