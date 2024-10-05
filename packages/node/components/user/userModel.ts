@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-import { addUser, updateUserData } from '../db/db';
-import { Credentials } from '../types';
+import { addUser, updateUserData } from '../../db/db';
+import { Credentials } from '../../types';
 
 
 /**
@@ -19,7 +19,7 @@ const saveToken = async (id: string): Promise<Credentials | false> => {
   if (result) {
     return {id, token};
   } else {
-    console.error('Error when try to update token');
+    console.error('UserModel: Error when try to update token');
 
     return false;
   }
@@ -48,7 +48,7 @@ export const getOrRetreiveUser = async (token?: string): Promise<Credentials | f
     if (id) {
       return saveToken(id);
     } else {
-      console.error('Error when try to user from provided token');
+      console.error('UserModel: Error when try to user from provided token');
 
       return false;
     }
@@ -66,7 +66,7 @@ export const getUserIdFromToken = (token: string): string => {
 
     return id;
   } catch (error) {
-    console.error('Error when try to verify token ', error);
+    console.error('UserModel: Error when try to verify token ', error);
 
     return '';
   }

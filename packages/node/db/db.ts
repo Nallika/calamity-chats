@@ -1,12 +1,14 @@
 import { MongoClient, ServerApiVersion, ObjectId, Db } from 'mongodb';
 
 import * as dotenv from 'dotenv';
-import { USERS_TABLE } from '../constants';
 import { UserData } from '../types';
 
 dotenv.config();
 
 const uri = process.env.MONGODB_URI!;
+const usersTable = process.env.USERS_TABLE!;
+const botsTable = process.env.BOTS_TABLE!;
+
 let client: MongoClient;
 // db entitity
 let db: Db;
@@ -29,7 +31,7 @@ export const connectDB = async (): Promise<Db> => {
       await client.connect();
       db = client.db(process.env.DB_NAME);
     } catch (error) {
-      console.error('DB init error', error);
+      console.error('DB: init error', error);
     }
   }
 
@@ -51,10 +53,10 @@ export const disconnectDB = async () => {
  */
 export const addUser = async (): Promise<string> => {
   try {
-    const result = await db.collection(USERS_TABLE).insertOne({});
+    const result = await db.collection(usersTable).insertOne({});
     return result.insertedId.toHexString();
   } catch (error) {
-    console.error('Error on try to add user, ', error);
+    console.error('DB: Error on try to add user, ', error);
     return '';
   }
 };
@@ -64,10 +66,10 @@ export const addUser = async (): Promise<string> => {
  */
 export const updateUserData = async (id: string, userData: Partial<UserData>): Promise<boolean> => {
   try {
-    const result = await db.collection(USERS_TABLE).updateOne({ _id: new ObjectId(id) }, { $set: {...userData} });
+    const result = await db.collection(usersTable).updateOne({ _id: new ObjectId(id) }, { $set: {...userData} });
     return result.acknowledged;
   } catch (error) {
-    console.error('Error on try to update user, ', error);
+    console.error('DB: Error on try to update user, ', error);
     return false;
   }
 };
@@ -77,10 +79,10 @@ export const updateUserData = async (id: string, userData: Partial<UserData>): P
  */
 export const getUser = async (id: string): Promise<UserData | null> => {
   try {
-    const user = await db.collection(USERS_TABLE).findOne({ _id: new ObjectId(id) }) as UserData | null;
+    const user = await db.collection(usersTable).findOne({ _id: new ObjectId(id) }) as UserData | null;
     return user;
   } catch (error) {
-    console.error('Error on try to get user, ', error);
+    console.error('DB: Error on try to get user, ', error);
     return null;
   }
 };

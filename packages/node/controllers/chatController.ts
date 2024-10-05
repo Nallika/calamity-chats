@@ -1,9 +1,9 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 
-import { getOrRetreiveUser } from '../components/UserModel';
+import { getOrRetreiveUser } from '../components/user/userModel';
 import { verifyToken } from './verifyTokenMiddleware';
-import { createChatManager, getChatManager } from '../components/ChatStorage';
+import { createChatManager, getChatManager } from '../components/chatManager/chatStorage';
 
 
 /**

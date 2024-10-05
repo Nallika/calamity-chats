@@ -15,11 +15,19 @@ export const requestToOpenAI = async (prompt: string, config: BotConfig): Promis
     const response = await axios.post(OPEN_AI_API_URL,
       {
         model: process.env.OPEN_AI_MODEL,
-        messages: [{
+        messages: [
+        // Tunned role
+        {
+          role: 'system',
+          content: `${config.manner}. ${config.context}`
+        },
+        // Actual prompt
+        {
           role: 'user',
-          content: `${config.maner}, ${prompt}`
+          content: `${prompt}`
         }],
-        temperature: config.temperature
+        temperature: config.temperature,
+        max_tokens: config.max_tokens,
       },
       {
         headers: {
@@ -39,5 +47,30 @@ export const requestToOpenAI = async (prompt: string, config: BotConfig): Promis
   }
 }
 
+// Generate chat id from user id and current time
 export const createChatId = (userId: string):string => 
   crypto.createHash('md5').update(`${userId}_${Date.now()}`).digest('hex');
+
+/**
+ * Shuffle provided array
+ */
+export const shuffle = <T>(arr: Array<T>): Array<T>  => {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+
+  return arr;
+}
+
+/**
+ * Get boolean values from provided string
+ */
+export const parseBooleanString = (str: string): boolean[] => {
+  const regex = /(True|False|true|false)/g;
+  const matches = [...str.matchAll(regex)];
+
+  return matches.map((match) => match[0].toLowerCase() === 'true');
+};

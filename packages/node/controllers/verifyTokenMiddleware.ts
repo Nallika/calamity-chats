@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { getUserIdFromToken } from '../components/UserModel';
+import { getUserIdFromToken } from '../components/user/userModel';
 
 /**
  * Middlerware run in routes.
@@ -18,7 +18,7 @@ export const verifyToken =(req:express.Request, res:express.Response, next: expr
 
     res.locals.userId = userId;
   } catch (err) {
-    console.error('Error on authorization attempt', err);
+    console.error('verifyToken: Error on authorization attempt', err);
 
     return res.status(401).send('Error on authorization attempt');
   }

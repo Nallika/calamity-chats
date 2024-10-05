@@ -11,7 +11,7 @@ export default async function Home() {
   // );
 
   const staticData = {
-    bots: ['House', 'Bart'],
+    bots: ['Bart', 'House', 'Granny', 'Nero', 'Baxter'],
     modes: Object.values(ChatModeEnum),
   };
 

@@ -67,7 +67,8 @@ export class ChatManager {
     // Add check on pending connection to avoid multiple subscription
     if (!this.pending) {
       this.socket.on(SocketMessageEnum.OUTPUT_MESSAGE, addMessage);
-      this.socket.on(SocketMessageEnum.NOTIFICATION, this.onNotification);
+      // @todo Here bug, sometimes we may receive hanshake before actual subscription
+      this.socket.on(SocketMessageEnum.OUTPUT_NOTIFICATION, this.onNotification);
       this.pending = true;
     }
   }
@@ -83,7 +84,7 @@ export class ChatManager {
    * Send hanshake message to back
    */
   public sendHandshake = () => {
-    this.socket.emit(SocketMessageEnum.NOTIFICATION, {
+    this.socket.emit(SocketMessageEnum.INPUT_NOTIFICATION, {
       type: NotificationType.HANDSHAKE,
       mode: this.mode
     });
@@ -112,7 +113,7 @@ export class ChatManager {
   public cleanup() {
     if (this.socket.connected) {
       this.socket.off(SocketMessageEnum.OUTPUT_MESSAGE);
-      this.socket.off(SocketMessageEnum.NOTIFICATION);
+      this.socket.off(SocketMessageEnum.OUTPUT_NOTIFICATION);
       this.socket.disconnect();
     }
   }

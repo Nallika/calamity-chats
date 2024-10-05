@@ -2,7 +2,6 @@ import { Server } from 'socket.io';
 
 import { ChatManager } from './ChatManager';
 
-
 // @TODO maybe use cache ?
 // Map for active user intances
 const chatInstances = new Map();
@@ -20,7 +19,7 @@ export const createChatManager = (io: Server, userId: string): ChatManager => {
 
 export const getChatManager = (userId: string): ChatManager | false => {
   if (!chatInstances.has(userId)) {
-    console.error(`There is no active chat ssesion for user' ${userId}`);
+    console.error(`ChatStorage: There is no active chat ssesion for user' ${userId}`);
     return false;
   }
 

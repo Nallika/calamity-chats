@@ -46,6 +46,7 @@ export const ChatContextProvider: React.FC<{children: React.ReactNode}> = ({ chi
   }, [chatId, mode]);
 
   useEffect(() => {
+    // @todo Here bug, need to make another way to sen connected and loading state
     if (connected) {
       setLoading(false);
     }
