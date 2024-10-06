@@ -1,4 +1,5 @@
 // API routes prefix, dependent on current env
+// @todo here bug on prod
 const urlPrefix = process.env.NEXT_PUBLIC_API_BASE_URL ? process.env.NEXT_PUBLIC_API_BASE_URL : '';
 
 // API routes

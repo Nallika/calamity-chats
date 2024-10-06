@@ -25,3 +25,4 @@ out/
 
 # host files
 heroku.yml
+deploy.sh

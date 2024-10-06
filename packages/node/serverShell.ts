@@ -70,11 +70,15 @@ export const serverShell = (app: Express) => {
   app.use('/api', routes);
   
   const startServer = async () => {
-    await connectDB();
+    try {
+      await connectDB();
   
-    server.listen(PORT, () => {
-      console.log(`> Server is running on port ${PORT}`);
-    });
+      server.listen(PORT, () => {
+        console.log(`> Server is running on port ${PORT}`);
+      });
+    } catch (error) {
+      console.error('serverShell: unable start server ', error);
+    }
   }
   /**
    * Stop server and disconnect db

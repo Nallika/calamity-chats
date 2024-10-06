@@ -8,7 +8,7 @@
     "packages/types"
   ],
   "scripts": {
-    "start": "yarn workspace @calamity-chats/node start",
+    "start": "NODE_ENV=production yarn workspace @calamity-chats/node start",
     "dev": "NODE_ENV=development lerna run --parallel dev",
     "build": "lerna run build --stream --concurrency=1",
     "rebuild-types": "yarn workspace @calamity-chats/types build"
